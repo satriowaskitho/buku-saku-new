@@ -6,7 +6,7 @@ import { Text } from "@/components/ui/text";
 import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Animated } from "react-native";
-import "../../global.css";
+import "../global.css";
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -34,25 +34,25 @@ export default function OnboardingScreen() {
       <Animated.View
         style={{ opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}
       >
-        <Box className="items-center">
-          {/* <Image
-            source={require("../../assets/images/general_economic_census_illustration.jfif")}
-            style={{ width: 280, height: 280 }}
-            contentFit="contain"
-          /> */}
-
-          <Text className="text-3xl font-bold text-blue-500 mt-6 text-center">
+        <Box className="items-center gap-1">
+          <Text
+            style={{ fontSize: 22 }}
+            className="font-bold text-blue-500 text-center"
+          >
             Selamat Datang di
           </Text>
-          <Text className="text-3xl font-bold text-blue-500 text-center">
+          <Text
+            style={{ fontSize: 28 }}
+            className="font-bold text-blue-500 mt-2 text-center"
+          >
             (...)
           </Text>
-          <Text className="text-gray-400 text-center mt-2">
+          <Text className="text-gray-400 mt-4 text-center">
             Aplikasi buku saku sensus ekonomi
           </Text>
 
           <Button
-            className="bg-blue-500 rounded-xl px-10 py-3 mt-8"
+            className="bg-blue-500 rounded-xl px-10 py-3 mt-6"
             onPress={() => router.push("/(auth)/login")}
           >
             <HStack space="sm" className="items-center">
