@@ -69,3 +69,78 @@ export default function OnboardingScreen() {
     </Box>
   );
 }
+// import { Box } from "@/components/ui/box";
+// import { Button, ButtonText } from "@/components/ui/button";
+// import { HStack } from "@/components/ui/hstack";
+// import { Icon } from "@/components/ui/icon";
+// import { Text } from "@/components/ui/text";
+// import { useRouter } from "expo-router";
+// import { ChevronRight } from "lucide-react-native";
+// import { useCallback, useEffect, useRef } from "react";
+// import { Animated } from "react-native";
+// import * as SecureStore from "expo-secure-store";
+
+// export default function OnboardingScreen() {
+//   const router = useRouter();
+//   const fadeAnim = useRef(new Animated.Value(0)).current;
+//   const slideAnim = useRef(new Animated.Value(40)).current;
+
+//   useEffect(() => {
+//     Animated.parallel([
+//       Animated.timing(fadeAnim, {
+//         toValue: 1,
+//         duration: 800,
+//         useNativeDriver: true,
+//       }),
+//       Animated.timing(slideAnim, {
+//         toValue: 0,
+//         duration: 800,
+//         useNativeDriver: true,
+//       }),
+//     ]).start();
+//   }, []);
+
+//   const handleMulai = useCallback(async () => {
+//     await SecureStore.setItemAsync("hasSeenOnboarding", "true");
+//     router.replace("/(auth)/login");
+//   }, [router]);
+
+//   return (
+//     <Box className="flex-1 items-center justify-center bg-white px-8">
+//       <Animated.View
+//         style={{
+//           opacity: fadeAnim,
+//           transform: [{ translateY: slideAnim }],
+//           width: "100%",
+//         }}
+//       >
+//         <Box className="w-full px-4 mb-5">
+//           <Box className="mb-4">
+//             <Text className="text-xl font-bold text-gray-700 mb-1">
+//               Selamat Datang 👋
+//             </Text>
+//             <Text className="text-3xl font-bold text-blue-700">
+//               KAKUKLI
+//             </Text>
+//           </Box>
+
+//           <Text className="text-gray-400 mb-6">
+//             Masuk untuk memulai pencarian data usaha di Kabupaten Karimun
+//           </Text>
+
+//           <Button
+//             className="bg-blue-500 rounded-xl px-10 py-3"
+//             onPress={handleMulai}
+//           >
+//             <HStack space="sm" className="items-center">
+//               <ButtonText className="text-white font-bold text-lg">
+//                 Mulai
+//               </ButtonText>
+//               <Icon as={ChevronRight} className="text-white" size="md" />
+//             </HStack>
+//           </Button>
+//         </Box>
+//       </Animated.View>
+//     </Box>
+//   );
+// }
