@@ -1,12 +1,12 @@
 import { Box } from "@/components/ui/box";
 import { Button, ButtonText } from "@/components/ui/button";
 import { HStack } from "@/components/ui/hstack";
-import { ArrowRightIcon, Icon } from "@/components/ui/icon";
+import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
+import { ChevronRight } from "lucide-react-native";
+import { useCallback, useEffect, useRef } from "react";
 import { Animated } from "react-native";
-import "../../global.css";
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -29,37 +29,39 @@ export default function OnboardingScreen() {
     ]).start();
   }, []);
 
+  // ✅ Langsung ke login, tidak perlu cek token
+  const handleMulai = useCallback(() => {
+    router.push("/(auth)/login");
+  }, [router]);
+
   return (
     <Box className="flex-1 items-center justify-center bg-white px-8">
       <Animated.View
         style={{ opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}
       >
-        <Box className="items-center">
-          {/* <Image
-            source={require("../../assets/images/general_economic_census_illustration.jfif")}
-            style={{ width: 280, height: 280 }}
-            contentFit="contain"
-          /> */}
+        <Box className="w-full px-8 mb-5">
+          <Box className="mb-2">
+            <Text className="text-xl font-bold text-black-700 mb-1">
+              Selamat Datang 👋
+            </Text>
+            <Text className="text-3xl font-bold text-blue-700">
+              KAKUKLI
+            </Text>
+          </Box>
 
-          <Text className="text-3xl font-bold text-blue-500 mt-6 text-center">
-            Selamat Datang di
-          </Text>
-          <Text className="text-3xl font-bold text-blue-500 text-center">
-            (...)
-          </Text>
-          <Text className="text-gray-400 text-center mt-2">
-            Aplikasi buku saku sensus ekonomi
+          <Text className="text-gray-400">
+            Masuk untuk memulai pencarian data usaha di Kabupaten Karimun
           </Text>
 
           <Button
-            className="bg-blue-500 rounded-xl px-10 py-3 mt-8"
-            onPress={() => router.push("/(auth)/login")}
+            className="bg-blue-500 rounded-xl px-10 py-2 mt-2"
+            onPress={handleMulai}
           >
             <HStack space="sm" className="items-center">
               <ButtonText className="text-white font-bold text-lg">
                 Mulai
               </ButtonText>
-              <Icon as={ArrowRightIcon} className="text-white" size="md" />
+              <Icon as={ChevronRight} className="text-white" size="md" />
             </HStack>
           </Button>
         </Box>
