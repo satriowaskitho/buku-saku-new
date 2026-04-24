@@ -36,7 +36,13 @@ export default function LoginScreen() {
     try {
       setLoading(true);
       const data = await loginAPI(username, password);
+      
+      console.log("API token checking availability?", !!data.token);
       await saveToken(data.token);
+
+      const storedToken = await SecureStore.getItemAsync('token');
+      console.log("Saved token checking availability?", !!storedToken);
+
       await SecureStore.setItemAsync("username", data.username ?? username);
       router.replace("/(tabs)/home");
     } catch (err: any) {
