@@ -4,7 +4,7 @@ import { Input, InputField, InputSlot, InputIcon } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { SearchIcon } from "lucide-react-native";
 import { searchKamusKbli } from "@/database/kamusKbliRepository";
-import { useRouter, useFocusEffect } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type KamusResult = {
@@ -19,14 +19,12 @@ export default function KamusKbliPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<KamusResult[]>([]);
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        setQuery("");
-        setResults([]);
-      };
-    }, [])
-  );
+
+  const { reset } = useLocalSearchParams();
+  useEffect(() => {
+    setQuery("");
+    setResults([]);
+  }, [reset]);
 
   useEffect(() => {
     if (query.trim().length === 0) {

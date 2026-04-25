@@ -1,17 +1,16 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { AppHeader } from "@/components/app-header";
 import { HapticTab } from "@/components/haptic-tab";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import * as SecureStore from "expo-secure-store";
 
 export default function TabLayout() {
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const [userName, setUserName] = useState("User");
 
-  // Ambil username dari SecureStore
   useEffect(() => {
     const fetchUsername = async () => {
       const stored = await SecureStore.getItemAsync("username");
@@ -31,15 +30,31 @@ export default function TabLayout() {
     >
       <Tabs.Screen
         name="home"
-        options={{ title: "Home"}}
+        options={{ title: "Home" }}
       />
       <Tabs.Screen
         name="kbli-mapping"
-        options={{ title: "Pengelompokan Usaha by KBLI" }}
+        options={{
+          header: () => (
+            <AppHeader
+              userName={userName}
+              showBack={true}
+              onBack={() => router.replace("/home")}
+            />
+          ),
+        }}
       />
       <Tabs.Screen
         name="kamus-kbli"
-        options={{ title: "Kamus KBLI" }}
+        options={{
+          header: () => (
+            <AppHeader
+              userName={userName}
+              showBack={true}
+              onBack={() => router.replace("/home")}
+            />
+          ),
+        }}
       />
     </Tabs>
   );

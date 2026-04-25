@@ -80,6 +80,12 @@ export const insertKbliData = (data: KbliMapping[]) => {
 };
 
 export const searchKbliByNamaUsaha = (query: string) => {
+  const words = query.trim().split(/\s+/);
+
+  const conditions = words.map(() => `km.nama_usaha LIKE ?`).join(' AND ');
+
+  const params = words.map(word => `%${word}%`);
+
   return db.getAllSync(
     `SELECT 
       km.kbli_2025,
@@ -87,8 +93,8 @@ export const searchKbliByNamaUsaha = (query: string) => {
       kk.judul
     FROM kbli_mapping km
     LEFT JOIN kamus_kbli kk ON km.kbli_2025 = kk.kode_kbli
-    WHERE km.nama_usaha LIKE ?
+    WHERE ${conditions}
     LIMIT 100`,
-    [`%${query}%`]
+    params
   );
 };

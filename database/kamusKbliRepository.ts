@@ -73,24 +73,32 @@ export const insertKamusKbliData = (data: KamusKbli[]) => {
 export const getKamusKbliByKode = (kode: string) => {
   return db.getFirstSync<{
     kode_kbli: string;
+    kode_gabungan: string;  // ← tambah ini
     judul: string;
     deskripsi: string;
     kategori: string;
   }>(
-    `SELECT kode_kbli, judul, deskripsi, kategori FROM kamus_kbli WHERE kode_kbli = ?`,
+    `SELECT kode_kbli, kode_gabungan, judul, deskripsi, kategori FROM kamus_kbli WHERE kode_kbli = ?`,
     [kode]
   );
 };
 
 export const searchKamusKbli = (query: string) => {
+  const words = query.trim().split(/\s+/);
+  
+  const conditions = words.map(() => 
+    `(kode_kbli LIKE ? OR kategori LIKE ? OR judul LIKE ? OR deskripsi LIKE ?)`
+  ).join(' AND ');
+
+  const params = words.flatMap(word => 
+    [`%${word}%`, `%${word}%`, `%${word}%`, `%${word}%`]
+  );
+
   return db.getAllSync(
     `SELECT kode_kbli, kode_gabungan, kategori, judul, deskripsi 
      FROM kamus_kbli 
-     WHERE kode_kbli LIKE ?
-        OR kategori LIKE ?
-        OR judul LIKE ?
-        OR deskripsi LIKE ?
+     WHERE ${conditions}
      LIMIT 100`,
-    [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`]
+    params
   );
 };

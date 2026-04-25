@@ -52,7 +52,7 @@ export default function KamusKbliDetail() {
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 24 }}>
 
         {/* Kode KBLI besar */}
-        <Text style={{ fontSize: 36, fontWeight: "800", color: "#2563eb", marginBottom: 4 }}>
+        <Text style={{ fontSize: 28, fontWeight: "800", color: "#2563eb", marginBottom: 4, flexShrink: 1 }}>
           {detail?.kode_kbli ?? kode_kbli}
         </Text>
 

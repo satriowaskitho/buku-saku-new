@@ -74,14 +74,14 @@ export default function HomeScreen() {
           <Button
             className="bg-blue-500 rounded-xl w-full"
             style={{ height: 40, justifyContent: "center" }}
-            onPress={() => router.push("/kbli-mapping")}
+             onPress={() => router.push({ pathname: "/kbli-mapping", params: { reset: Date.now() } })}
           >
             <ButtonText className="text-white font-bold text-base">Search by Nama Usaha</ButtonText>
           </Button>
           <Button 
             className="bg-blue-300 rounded-xl w-full" 
             style={{ height: 40, justifyContent: "center" }}
-            onPress={() => router.push("/kamus-kbli")}
+            onPress={() => router.push({ pathname: "/kamus-kbli", params: { reset: Date.now() } })}
           >
             <ButtonText className="text-white font-bold text-base">Search by Deskripsi Usaha</ButtonText>
           </Button>

@@ -4,7 +4,7 @@ import { Input, InputField, InputSlot, InputIcon } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { SearchIcon } from "lucide-react-native";
 import { searchKbliByNamaUsaha } from "@/database/kbliMappingRepository";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type KbliResult = {
@@ -16,20 +16,24 @@ type KbliResult = {
 export default function KbliMappingPage() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { reset } = useLocalSearchParams();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<KbliResult[]>([]);
+
+  useEffect(() => {
+    setQuery("");
+    setResults([]);
+  }, [reset]);
 
   useEffect(() => {
     if (query.trim().length === 0) {
       setResults([]);
       return;
     }
-
     const timeout = setTimeout(() => {
       const data = searchKbliByNamaUsaha(query.trim()) as KbliResult[];
       setResults(data);
     }, 400);
-
     return () => clearTimeout(timeout);
   }, [query]);
 
@@ -48,14 +52,12 @@ export default function KbliMappingPage() {
 
       {results.length > 0 && (
         <View style={{ marginTop: 16, flex: 1 }}>
-          {/* Header */}
           <View style={{ flexDirection: "row", backgroundColor: "#2563eb", borderRadius: 8, paddingVertical: 8, paddingHorizontal: 12, marginBottom: 4 }}>
             <Text style={{ color: "#fff", fontWeight: "700", fontSize: 12, width: 80 }}>KBLI 2025</Text>
             <Text style={{ color: "#fff", fontWeight: "700", fontSize: 12, flex: 1 }}>Nama Usaha</Text>
             <Text style={{ color: "#fff", fontWeight: "700", fontSize: 12, flex: 1 }}>Judul</Text>
           </View>
 
-          {/* Rows */}
           <FlatList
             data={results}
             keyExtractor={(_, index) => index.toString()}
