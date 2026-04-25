@@ -3,7 +3,7 @@ import { insertKbliData, isKbliEmpty, setupKbliTable } from '@/database/kbliMapp
 import { insertKamusKbliData, isKamusKbliEmpty, setupKamusKbliTable } from '@/database/kamusKbliRepository';
 
 const BASE_URL = "https://kakukli-backend-lac.vercel.app";
-const LIMIT = 100;
+const LIMIT = 1000;
 
 const fetchAll = async (token: string, endpoint: string) => {
   let offset = 0;
@@ -19,7 +19,7 @@ const fetchAll = async (token: string, endpoint: string) => {
     });
     const json = await res.json();
     const data = json.data ?? [];
-    allData = [...allData, ...data];
+    allData.push(...data);
     offset += LIMIT;
     hasMore = data.length === LIMIT;
   }
@@ -27,18 +27,15 @@ const fetchAll = async (token: string, endpoint: string) => {
   return allData;
 };
 
-// syncKbliData.ts
 export const syncKbliData = async (): Promise<{ success: boolean; message: string }> => {
   try {
     const token = await SecureStore.getItemAsync('token');
     console.log("Token availability checking?", !!token);
     if (!token) return { success: false, message: 'Tidak ada token' };
 
-    // ✅ Tidak perlu await — sudah sync
     setupKbliTable();
     setupKamusKbliTable();
 
-    // ✅ Tidak perlu await — sudah sync
     if (isKbliEmpty()) {
       const data = await fetchAll(token, '/api/kbli-mapping');
       insertKbliData(data);
