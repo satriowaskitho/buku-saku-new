@@ -11,11 +11,12 @@ import { ChevronLeft, LogOut } from "lucide-react-native";
 import { useState, useCallback } from "react";
 import { removeToken } from "@/database/tokenRepository";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Modal, TouchableWithoutFeedback, View } from "react-native"; // ✅ pakai RN Modal
+import { Modal, TouchableWithoutFeedback, View } from "react-native";
 
 type AppHeaderProps = {
   showBack?: boolean;
   userName?: string;
+  onBack?: () => void;
 };
 
 function getInitials(name: string) {
@@ -24,7 +25,7 @@ function getInitials(name: string) {
   return (words[0][0] + words[1][0]).toUpperCase();
 }
 
-export function AppHeader({ showBack = false, userName = "User" }: AppHeaderProps) {
+export function AppHeader({ showBack = false, userName = "User", onBack }: AppHeaderProps) {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const initials = getInitials(userName);
@@ -33,7 +34,7 @@ export function AppHeader({ showBack = false, userName = "User" }: AppHeaderProp
   const handleLogout = useCallback(async () => {
     setShowDropdown(false);
     await removeToken();
-    router.replace("/"); 
+    router.replace("/");
   }, [router]);
 
   return (
@@ -46,7 +47,7 @@ export function AppHeader({ showBack = false, userName = "User" }: AppHeaderProp
 
           <Box className="w-10">
             {showBack && (
-              <Pressable onPress={() => router.back()}>
+              <Pressable onPress={onBack ?? (() => router.back())}>
                 <Icon as={ChevronLeft} size="lg" className="text-gray-700" />
               </Pressable>
             )}
@@ -66,21 +67,17 @@ export function AppHeader({ showBack = false, userName = "User" }: AppHeaderProp
         </HStack>
       </Box>
 
-      {/* ✅ Pakai RN Modal — backdrop klik tutup, klik dalam nggak tutup */}
       <Modal
         visible={showDropdown}
         transparent
         animationType="fade"
         onRequestClose={() => setShowDropdown(false)}
       >
-        {/* Backdrop — klik di luar tutup */}
         <TouchableWithoutFeedback onPress={() => setShowDropdown(false)}>
-        <View style={{ 
+          <View style={{
             flex: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.3)", // ✅ redup 30%
-        }}>
-
-            {/* Dropdown card — klik di dalam TIDAK tutup */}
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+          }}>
             <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
               <View style={{
                 position: "absolute",
@@ -122,7 +119,6 @@ export function AppHeader({ showBack = false, userName = "User" }: AppHeaderProp
                 </VStack>
               </View>
             </TouchableWithoutFeedback>
-
           </View>
         </TouchableWithoutFeedback>
       </Modal>

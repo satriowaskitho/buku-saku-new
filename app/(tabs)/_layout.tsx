@@ -11,7 +11,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const [userName, setUserName] = useState("User");
 
-  // ✅ Ambil username dari SecureStore
+  // Ambil username dari SecureStore
   useEffect(() => {
     const fetchUsername = async () => {
       const stored = await SecureStore.getItemAsync("username");
@@ -31,21 +31,15 @@ export default function TabLayout() {
     >
       <Tabs.Screen
         name="home"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
-          ),
-        }}
+        options={{ title: "Home"}}
       />
       <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Explore",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
-          ),
-        }}
+        name="kbli-mapping"
+        options={{ title: "Pengelompokan Usaha by KBLI" }}
+      />
+      <Tabs.Screen
+        name="kamus-kbli"
+        options={{ title: "Kamus KBLI" }}
       />
     </Tabs>
   );

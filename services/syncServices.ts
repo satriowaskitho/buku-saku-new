@@ -27,22 +27,23 @@ const fetchAll = async (token: string, endpoint: string) => {
   return allData;
 };
 
+// syncKbliData.ts
 export const syncKbliData = async (): Promise<{ success: boolean; message: string }> => {
   try {
     const token = await SecureStore.getItemAsync('token');
-    console.log("Token availability checking?", !!token); 
+    console.log("Token availability checking?", !!token);
     if (!token) return { success: false, message: 'Tidak ada token' };
 
+    // ✅ Tidak perlu await — sudah sync
     setupKbliTable();
     setupKamusKbliTable();
 
-    // Sync kbli_mapping
+    // ✅ Tidak perlu await — sudah sync
     if (isKbliEmpty()) {
       const data = await fetchAll(token, '/api/kbli-mapping');
       insertKbliData(data);
     }
 
-    // Sync kamus_kbli
     if (isKamusKbliEmpty()) {
       const data = await fetchAll(token, '/api/kamus-kbli');
       insertKamusKbliData(data);

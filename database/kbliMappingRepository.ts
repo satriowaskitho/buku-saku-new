@@ -37,22 +37,58 @@ export const isKbliEmpty = (): boolean => {
   return (result?.count ?? 0) === 0;
 };
 
-// Insert banyak data
+//  insert KBLI data ke database
 export const insertKbliData = (data: KbliMapping[]) => {
+  console.log("MASUK INSERT KBLI:", data.length);
+
   const stmt = db.prepareSync(`
     INSERT OR REPLACE INTO kbli_mapping 
     (id, nama_usaha, status_perusahaan, status_hasil_gc, kbli_2020, kbli_2025, korespondensi, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
+
+  let i = 0;
+
   try {
+    console.log("BEGIN TRANSACTION");
+    db.execSync("BEGIN TRANSACTION");
+
     for (const item of data) {
       stmt.executeSync([
         item.id, item.nama_usaha, item.status_perusahaan,
         item.status_hasil_gc, item.kbli_2020, item.kbli_2025,
         item.korespondensi, item.created_at, item.updated_at
       ]);
+
+      i++;
+
+      if (i % 1000 === 0) {
+        console.log("Inserted:", i);
+      }
     }
+
+    db.execSync("COMMIT");
+    console.log("DONE INSERT KBLI");
+
+  } catch (error) {
+    db.execSync("ROLLBACK");
+    console.error("ERROR INSERT:", error);
+    throw error;
   } finally {
     stmt.finalizeSync();
   }
+};
+
+export const searchKbliByNamaUsaha = (query: string) => {
+  return db.getAllSync(
+    `SELECT 
+      km.kbli_2025,
+      km.nama_usaha,
+      kk.judul
+    FROM kbli_mapping km
+    LEFT JOIN kamus_kbli kk ON km.kbli_2025 = kk.kode_kbli
+    WHERE km.nama_usaha LIKE ?
+    LIMIT 100`,
+    [`%${query}%`]
+  );
 };
