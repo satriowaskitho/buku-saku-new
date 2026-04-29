@@ -7,16 +7,20 @@ import { Avatar, AvatarFallbackText } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
 import { Button, ButtonText } from "@/components/ui/button";
 import { useRouter } from "expo-router";
-import { ChevronLeft, LogOut } from "lucide-react-native";
+import { ChevronLeft, LogOut, RefreshCw } from "lucide-react-native";
 import { useState, useCallback } from "react";
 import { removeToken } from "@/database/tokenRepository";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Modal, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, Modal, TouchableWithoutFeedback, View } from "react-native";
 
 type AppHeaderProps = {
   showBack?: boolean;
   userName?: string;
   onBack?: () => void;
+  showSync?: boolean;
+  onSync?: () => void;
+  updateCount?: number; // ← tambah
+  isSyncing?: boolean;
 };
 
 function getInitials(name: string) {
@@ -25,7 +29,7 @@ function getInitials(name: string) {
   return (words[0][0] + words[1][0]).toUpperCase();
 }
 
-export function AppHeader({ showBack = false, userName = "User", onBack }: AppHeaderProps) {
+export function AppHeader({ showBack = false, userName = "User", onBack, showSync = false, onSync, updateCount = 0, isSyncing = false }: AppHeaderProps) {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const initials = getInitials(userName);
@@ -53,16 +57,62 @@ export function AppHeader({ showBack = false, userName = "User", onBack }: AppHe
             )}
           </Box>
 
-          <Pressable onPress={() => setShowDropdown(true)} className="p-2">
-            <HStack space="sm" className="items-center">
-              <Text className="text-sm font-medium text-gray-700">{userName}</Text>
-              <Avatar size="sm" className="bg-blue-500">
-                <AvatarFallbackText className="text-white font-bold">
-                  {initials}
-                </AvatarFallbackText>
-              </Avatar>
-            </HStack>
-          </Pressable>
+          <HStack space="sm" className="items-center">
+            {showSync && (
+              <View>
+                <Pressable
+                  onPress={onSync}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "#f97316",
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 20,
+                    gap: 6,
+                    opacity: isSyncing ? 0.7 : 1,
+                  }}
+                >
+                  {isSyncing 
+                    ? <ActivityIndicator size="small" color="#fff" />
+                    : <RefreshCw size={14} color="#fff" />
+                  }
+                  <Text style={{ color: "#fff", fontSize: 12, fontWeight: "700" }}>Sync Data</Text>
+                </Pressable>
+
+                {/* Badge */}
+                {updateCount > 0 && (
+                  <View style={{
+                    position: "absolute",
+                    top: -6,
+                    right: -6,
+                    backgroundColor: "#ef4444",
+                    borderRadius: 10,
+                    minWidth: 18,
+                    height: 18,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingHorizontal: 4,
+                  }}>
+                    <Text style={{ color: "#fff", fontSize: 10, fontWeight: "700" }}>
+                      {updateCount}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            )}
+
+            <Pressable onPress={() => setShowDropdown(true)} className="p-2">
+              <HStack space="sm" className="items-center">
+                <Text className="text-sm font-medium text-gray-700">{userName}</Text>
+                <Avatar size="sm" className="bg-blue-500">
+                  <AvatarFallbackText className="text-white font-bold">
+                    {initials}
+                  </AvatarFallbackText>
+                </Avatar>
+              </HStack>
+            </Pressable>
+          </HStack>
 
         </HStack>
       </Box>
