@@ -1,6 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
-import { insertKbliData, isKbliEmpty, setupKbliTable } from '@/database/kbliMappingRepository';
-import { insertKamusKbliData, isKamusKbliEmpty, setupKamusKbliTable } from '@/database/kamusKbliRepository';
+import { insertKbliData, isKbliEmpty, setupKbliTable, deleteKbliByIds} from '@/database/kbliMappingRepository';
+import { insertKamusKbliData, isKamusKbliEmpty, setupKamusKbliTable, deleteKamusByKodes} from '@/database/kamusKbliRepository';
 
 const BASE_URL = "https://kakukli-backend-lac.vercel.app";
 const LIMIT = 1000;
@@ -42,12 +42,12 @@ export const initialSync = async (): Promise<{ success: boolean; message: string
 
     if (await isKbliEmpty()) {
       const data = await fetchAll(token, '/api/kbli-mapping');
-      insertKbliData(data);
+      await insertKbliData(data);
     }
 
     if (await isKamusKbliEmpty()) {
       const data = await fetchAll(token, '/api/kamus-kbli');
-      insertKamusKbliData(data);
+      await insertKamusKbliData(data);
     }
 
     await SecureStore.setItemAsync('lastSync', new Date().toISOString());
@@ -69,13 +69,19 @@ export const updateSync = async (): Promise<{ success: boolean; message: string 
 
     // kbli_mapping
     const kbliData = await fetchAll(token, '/api/kbli-mapping', lastSync);
-    console.log("kbli_mapping baru/berubah:", kbliData.length);
-    if (kbliData.length > 0) insertKbliData(kbliData);
+    const toDeleteKbli = kbliData.filter((item: any) => item.is_deleted === true);
+    const toUpsertKbli = kbliData.filter((item: any) => item.is_deleted === false);
+    console.log("kbli delete:", toDeleteKbli.length, "upsert:", toUpsertKbli.length);
+    if (toDeleteKbli.length > 0) await deleteKbliByIds(toDeleteKbli.map((item: any) => item.id));
+    if (toUpsertKbli.length > 0) insertKbliData(toUpsertKbli);
 
     // kamus_kbli
     const kamusData = await fetchAll(token, '/api/kamus-kbli', lastSync);
-    console.log("kamus_kbli baru/berubah:", kamusData.length);
-    if (kamusData.length > 0) insertKamusKbliData(kamusData);
+    const toDeleteKamus = kamusData.filter((item: any) => item.is_deleted === true);
+    const toUpsertKamus = kamusData.filter((item: any) => item.is_deleted === false);
+    console.log("kamus_kbli delete:", toDeleteKamus.length, "upsert:", toUpsertKamus.length);
+    if (toDeleteKamus.length > 0) await deleteKamusByKodes(toDeleteKamus.map((item: any) => item.kode_kbli));
+    if (toUpsertKamus.length > 0) await insertKamusKbliData(toUpsertKamus);
 
     await SecureStore.setItemAsync('lastSync', new Date().toISOString());
     return { success: true, message: 'Update sync berhasil' };

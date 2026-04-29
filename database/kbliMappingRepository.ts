@@ -98,3 +98,17 @@ export const searchKbliByNamaUsaha = (query: string) => {
     params
   );
 };
+
+export const deleteKbliByIds = (ids: number[]) => {
+  if (ids.length === 0) return;
+  
+  try {
+    db.execSync("BEGIN TRANSACTION");
+    db.execSync(`DELETE FROM kbli_mapping WHERE id IN (${ids.join(',')})`);
+    db.execSync("COMMIT");
+    console.log("DELETED KBLI:", ids.length);
+  } catch (error) {
+    db.execSync("ROLLBACK");
+    throw error;
+  }
+};

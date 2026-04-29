@@ -102,3 +102,19 @@ export const searchKamusKbli = (query: string) => {
     params
   );
 };
+
+export const deleteKamusByKodes = (kodes: string[]) => {
+  if (kodes.length === 0) return;
+  
+  try {
+    db.execSync("BEGIN TRANSACTION");
+    // pakai string interpolation langsung dengan quoted strings
+    const quotedKodes = kodes.map(k => `'${k}'`).join(',');
+    db.execSync(`DELETE FROM kamus_kbli WHERE kode_kbli IN (${quotedKodes})`);
+    db.execSync("COMMIT");
+    console.log("DELETED KAMUS:", kodes.length);
+  } catch (error) {
+    db.execSync("ROLLBACK");
+    throw error;
+  }
+};
