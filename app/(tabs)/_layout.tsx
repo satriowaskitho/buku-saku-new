@@ -8,6 +8,7 @@ import * as SecureStore from "expo-secure-store";
 import { updateSync, checkForUpdates } from '@/services/syncServices';
 import { View, Pressable } from "react-native";
 import { Text } from "@/components/ui/text";
+import { verifyTokenWithServer } from "@/database/tokenRepository";
 
 export default function TabLayout() {
   const router = useRouter();
@@ -26,6 +27,22 @@ export default function TabLayout() {
   }, []);
 
   useEffect(() => {
+    const checkSession = async () => {
+      const valid = await verifyTokenWithServer();
+      if (!valid) {
+        router.replace("/onboarding"); 
+      }
+    };
+
+    checkSession(); // cek langsung saat buka
+
+    // ✅ checkSession - ganti ke 30 detik untuk testing
+    const interval = setInterval(checkSession, 5 * 60 * 1000); // tiap 5 menit
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     const check = async () => {
       const count = await checkForUpdates();
       if (count > 0) {
@@ -37,7 +54,7 @@ export default function TabLayout() {
     
     check(); // jalanin pertama kali
     
-    const interval = setInterval(check, 3 * 60 * 1000); // cek tiap 5 menit
+    const interval = setInterval(check, 5 * 60 * 1000); // cek tiap 5 menit
     
     return () => clearInterval(interval); // cleanup
   }, []);
@@ -90,7 +107,7 @@ export default function TabLayout() {
                   try {
                     await updateSync();
                     setUpdateCount(0);
-                    setShowToast(false); // ← toast langsung tutup!
+                    setShowToast(false); 
                   } finally {
                     setIsSyncing(false);
                   }

@@ -15,7 +15,7 @@ import { useState } from "react";
 import { Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { loginAPI } from "@/services/authServices";
-import { saveToken } from "@/database/tokenRepository";
+import { getToken, saveToken, verifyTokenWithServer } from "@/database/tokenRepository";
 import * as SecureStore from "expo-secure-store";
 import "../../global.css";
 
@@ -33,16 +33,17 @@ export default function LoginScreen() {
       return;
     }
 
+    const isValid = await verifyTokenWithServer();
+    if (isValid) {
+      router.replace("/(tabs)/home");
+      return;
+    }
+
     try {
       setLoading(true);
       const data = await loginAPI(username, password);
       
-      console.log("API token checking availability?", !!data.token);
       await saveToken(data.token);
-
-      const storedToken = await SecureStore.getItemAsync('token');
-      console.log("Saved token checking availability?", !!storedToken);
-
       await SecureStore.setItemAsync("username", data.username ?? username);
       router.replace("/(tabs)/home");
     } catch (err: any) {

@@ -2,44 +2,20 @@ import { Box } from "@/components/ui/box";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { ChevronRight } from "lucide-react-native";
-import { useCallback, useEffect, useRef } from "react";
-import { Animated, Image, Text, TouchableOpacity } from "react-native";
+import { useCallback } from "react";
+import { Image, Text, TouchableOpacity } from "react-native";
 
 export default function OnboardingScreen() {
   const router = useRouter();
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(40)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
 
   const handleMulai = useCallback(async () => {
     await SecureStore.setItemAsync("hasSeenOnboarding", "true");
-    router.replace("/(auth)/login" as any);
+    router.replace("/(auth)/login");
   }, [router]);
 
   return (
     <Box className="flex-1 bg-white px-6 justify-center items-center">
-      <Animated.View
-        style={{
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
-          width: "100%",
-          alignItems: "center",
-        }}
-      >
+      <Box style={{ width: "100%", alignItems: "center" }}>
         {/* 🔹 IMAGE */}
         <Image
           source={require("@/assets/images/onboarding-assets-new.png")}
@@ -63,7 +39,7 @@ export default function OnboardingScreen() {
 
         {/* 🔹 BUTTON */}
         <TouchableOpacity
-          // onPress={handleMulai}
+          onPress={handleMulai}
           activeOpacity={0.9}
           style={{
             backgroundColor: "#3b82f6",
@@ -82,8 +58,7 @@ export default function OnboardingScreen() {
           </Text>
           <ChevronRight color="white" size={18} />
         </TouchableOpacity>
-        
-      </Animated.View>
+      </Box>
     </Box>
   );
 }

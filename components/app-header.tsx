@@ -38,7 +38,7 @@ export function AppHeader({ showBack = false, userName = "User", onBack, showSyn
   const handleLogout = useCallback(async () => {
     setShowDropdown(false);
     await removeToken();
-    router.replace("/");
+    router.replace("/onboarding");
   }, [router]);
 
   return (

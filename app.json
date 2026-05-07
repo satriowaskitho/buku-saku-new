@@ -7,19 +7,20 @@
     "icon": "./assets/images/icon.png",
     "scheme": "bukusakunew",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "newArchEnabled": true,
+      "jsEngine": "hermes",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.putrisekarayuuu.bukusakunew"
     },
     "web": {
       "output": "static",
@@ -40,11 +41,17 @@
         }
       ],
       "expo-sqlite",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5520585f-c7cd-4e94-addc-419e3a6faf55"
+      }
     }
   }
 }
